@@ -10,4 +10,5 @@ class ShoppingWorldApplicationTests {
 	void contextLoads() {
 	}
 
+
 }

@@ -2,21 +2,18 @@ package com.example.shoppingworld.Model;
 
 import com.example.shoppingworld.Enum.CardType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.sql.Date;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 @Table(name = "card")
 public class Card {
     @Id
@@ -29,7 +26,7 @@ public class Card {
     int cvv;
 
     Date validTill;
-
+    @Enumerated(value = EnumType.STRING)
     CardType cardType;
 
     @ManyToOne

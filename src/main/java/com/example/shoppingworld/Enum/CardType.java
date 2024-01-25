@@ -1,4 +1,7 @@
 package com.example.shoppingworld.Enum;
 
-public class CardType {
+public enum CardType {
+    VISA,
+    RUPAY,
+    MASTERCARD
 }

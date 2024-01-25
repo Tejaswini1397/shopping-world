@@ -2,10 +2,7 @@ package com.example.shoppingworld.Model;
 
 import com.example.shoppingworld.Enum.Gender;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
@@ -16,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 @Table(name = "customer")
 public class Customer {
     @Id
@@ -29,7 +27,7 @@ public class Customer {
 
     @Column(unique = true,nullable = false)
     String mobileNo;
-
+    @Enumerated(value = EnumType.STRING)
     Gender gender;
 
     @OneToOne(mappedBy = "customer",cascade = CascadeType.ALL)
