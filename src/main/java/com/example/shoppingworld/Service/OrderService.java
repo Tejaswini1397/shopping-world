@@ -6,6 +6,7 @@ import com.example.shoppingworld.Repository.*;
 import com.example.shoppingworld.dto.RequestDto.CardRequestDto;
 import com.example.shoppingworld.dto.RequestDto.OrderEntityRequestDto;
 import com.example.shoppingworld.dto.ResponseDto.OrderEntityResponseDto;
+import com.example.shoppingworld.e.OrderNotFoundException;
 import com.example.shoppingworld.exception.CustomerNotFoundException;
 import com.example.shoppingworld.exception.InsufficientQuantityException;
 import com.example.shoppingworld.exception.InvalidCardException;
@@ -130,6 +131,35 @@ public class OrderService {
         simpleMailMessage.setTo(order.getCustomer().getEmailId());
         simpleMailMessage.setFrom("nitakhairnar1397@gmail.com");
         simpleMailMessage.setSubject("Order Placed");
+        simpleMailMessage.setText(text);
+
+        javaMailSender.send(simpleMailMessage);
+    }
+    public void cancelOrder(String orderId) throws OrderNotFoundException {
+//        find the order by orderId
+        OrderEntity order=orderEntityRepository.findByOrderId(orderId);
+        if (order==null){
+            throw new OrderNotFoundException("Order Not found with orderId");
+        }
+        // Optionally, you can add additional logic here (e.g., check if the order is cancellable)
+
+        order.getCustomer().getOrderEntities().remove(order);
+        for(Item item:order.getItems()){
+            item.getProduct().setAvailableQuantity(item.getProduct().getAvailableQuantity()+item.getRequiredQuantity());
+            item.getProduct().getItems().remove(item);
+        }
+//        remove the order from the database
+        orderEntityRepository.delete(order);
+//        send cancellation email to the customer
+    }
+    public void sendCancellationEmail(OrderEntity order){
+        String text="We're inform you that your order with orderId " + order.getOrderId() + " has been canceled. " +
+        "If you have any questions or concerns, feel free to contact our customer support." + "\n\n" +
+                "Thank you for considering our services.";
+        SimpleMailMessage simpleMailMessage=new SimpleMailMessage();
+        simpleMailMessage.setTo(order.getCustomer().getEmailId());
+        simpleMailMessage.setFrom("nitakhairnar1397@gmail.com");
+        simpleMailMessage.setSubject("Order Canceled");
         simpleMailMessage.setText(text);
 
         javaMailSender.send(simpleMailMessage);

@@ -9,6 +9,8 @@ import com.example.shoppingworld.transformer.CustomerTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CustomerService {
     @Autowired
@@ -22,5 +24,30 @@ public class CustomerService {
         customer.setCart(cart);
         Customer savedCustomer=customerRepository.save(customer);
         return CustomerTransformer.CustomerToCustomerResponseDto(savedCustomer);
+    }
+    public CustomerResponseDto putCustomer(Integer customerId,CustomerRequestDto customerRequestDto){
+        Optional<Customer>optionalCustomer=customerRepository.findById(customerId);
+        if(optionalCustomer.isPresent()){
+            Customer existingCustomer=optionalCustomer.get();
+            //update existing customer with new data from the DTO
+            existingCustomer.setName(customerRequestDto.getName());
+            existingCustomer.setEmailId(customerRequestDto.getEmailId());
+
+            //save the update customer
+            Customer customer=customerRepository.save(existingCustomer);
+            return CustomerTransformer.CustomerToCustomerResponseDto(customer);
+        }else {
+//            handle case where customer is not found
+            return null;
+        }
+    }
+    public CustomerResponseDto getCustomer(Integer customerId){
+        Optional<Customer>optionalCustomer=customerRepository.findById(customerId);
+        if(optionalCustomer.isPresent()){
+            Customer customer=optionalCustomer.get();
+            return CustomerTransformer.CustomerToCustomerResponseDto(customer);
+        }else {
+            return null;
+        }
     }
 }
